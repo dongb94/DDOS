@@ -18,6 +18,9 @@ public class RemoteControlUI :MonoBehaviour
     {
         remote = transform.GetComponent<RemoteControl>();
         
+        transform.Find("Commend").GetComponent<Dropdown>().onValueChanged.AddListener(OnChangeCommend);
+        transform.Find("Host").GetComponent<InputField>().onValueChanged.AddListener(OnChangeHost);
+        transform.Find("Port").GetComponent<InputField>().onValueChanged.AddListener(OnChangePort);
         transform.Find("ClientNum").GetComponent<InputField>().onValueChanged.AddListener(OnChangeClientNum);
         transform.Find("PacketSize").GetComponent<InputField>().onValueChanged.AddListener(OnChangePacketSize);
         transform.Find("PacketNum").GetComponent<InputField>().onValueChanged.AddListener(OnChangePacketNum);
@@ -63,6 +66,21 @@ public class RemoteControlUI :MonoBehaviour
     {
         client.gameObject.SetActive(false);
         _clientUiPool.Enqueue(client);
+    }
+    
+    private void OnChangeCommend(int commend)
+    {
+        remote.commend = (RemoteControl.Commend) commend;
+    }
+    
+    private void OnChangeHost(string host)
+    {
+        remote.host = host;
+    }
+    
+    private void OnChangePort(string port)
+    {
+        remote.port = port;
     }
 
     private void OnChangeClientNum(string num)

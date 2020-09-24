@@ -14,7 +14,7 @@ public class MultiConnect : MonoBehaviour
         _clients = new List<NodeConnect>();
     }
 
-    public void DoConnect(uint clientNum, uint packetSize, uint sendPacketNum)
+    public void DoConnect(string host, uint port, uint clientNum, uint packetSize, uint sendPacketNum)
     {
         if (_clients.Count < clientNum)
         {
@@ -25,9 +25,10 @@ public class MultiConnect : MonoBehaviour
                 newSocket.Initialize();
             }
         }
-        
+
         try
         {
+            NodeConnect.SetTarget(host, port);
             for (int i = 0; i < clientNum; i++)
             {
                 _clients[i].Connect(sendPacketNum, packetSize);
@@ -35,7 +36,11 @@ public class MultiConnect : MonoBehaviour
         }
         catch (ArgumentOutOfRangeException e)
         {
-            LogText.Instance.Print("Do Connect Err : "+e);
+            LogText.Instance.Print("=== Argument Out Of Range : " + e);
+        }
+        catch (Exception e)
+        {
+            LogText.Instance.Print("Do Connect Err : " + e);
         }
     }
 

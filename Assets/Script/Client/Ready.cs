@@ -79,8 +79,11 @@ public class Ready : MonoBehaviour
 
                     msg = Encoding.Default.GetString(_recvBuffer);
 
-                    var msgParse = msg.Split('.');
-
+                    var msgParse = msg.Split(',');
+                    
+                    if(msgParse.Length != 6)
+                        LogText.Instance.Print($"=== received commend msg was wrong length {msgParse.Length} ===");
+                    
                     if (msgParse[0].ToLower().Equals("quit"))
                     {
                         Application.Quit();
@@ -91,11 +94,13 @@ public class Ready : MonoBehaviour
                         goto receive;
                     }
                     
-                    var clientNum = uint.Parse(msgParse[0]);
-                    var packetSize = uint.Parse(msgParse[1]);
-                    var packetNum = uint.Parse(msgParse[2]);
+                    var host = msgParse[1];
+                    var port = uint.Parse(msgParse[2]);
+                    var clientNum = uint.Parse(msgParse[3]);
+                    var packetSize = uint.Parse(msgParse[4]);
+                    var packetNum = uint.Parse(msgParse[5]);
                     
-                    _connection.DoConnect(clientNum, packetSize, packetNum);
+                    _connection.DoConnect(host, port, clientNum, packetSize, packetNum);
                 }
             }
             catch (SocketException se)
@@ -103,12 +108,14 @@ public class Ready : MonoBehaviour
                 LogText.Instance.Print("recv err : "+se.ToString());
                 if (se.SocketErrorCode == SocketError.TimedOut)
                 {
-                    goto receive;
+                    LogText.Instance.Print("==receive TimeOut==");
+                    if (_socket.Connected)
+                    {
+                        LogText.Instance.Print("===goto receive===");
+                        goto receive;
+                    }
                 }
-                else
-                {
-                    throw;
-                }
+                throw;
             }
         }
         catch (Exception e)
@@ -129,11 +136,8 @@ public class Ready : MonoBehaviour
             {
                 LogText.Instance.Print(ee.ToString());
             }
-            finally
-            {
-                _socket.Close();
-            }
-
+            
+            _socket.Close();
             goto connect;
         }
     }

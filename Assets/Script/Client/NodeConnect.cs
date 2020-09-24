@@ -8,9 +8,8 @@ using UnityEngine;
 
 public class NodeConnect
 {
-    private const string IP = "13.125.85.119";
-    //private const string IP = "develop.almondgame.com";
-    private const int PORT = 3001;
+    private static string IP = "13.125.85.119";
+    private static int PORT = 3000;
 
     private const int MAX_BUFFER_SIZE = 65535;
     private const int RESERVE_SIZE = ushort.MaxValue;
@@ -31,6 +30,12 @@ public class NodeConnect
     {
         _rcvBuffer = new byte[MAX_BUFFER_SIZE];
         _sendBuffer = new byte[MAX_BUFFER_SIZE];
+    }
+
+    public static void SetTarget(string ip, uint port)
+    {
+        IP = ip;
+        PORT = (int) port;
     }
 
     public async Task<Socket> Connect(uint sendCount, uint bufferSize)
@@ -83,7 +88,7 @@ public class NodeConnect
     {
         try
         {
-            if (_socket.Connected)
+            if (_socket!=null && _socket.Connected)
             {
                 _socket.Shutdown(SocketShutdown.Both);
                 _socket.Disconnect(false);    

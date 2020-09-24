@@ -70,10 +70,19 @@ public class LogText
     {
         _logFileNum++;
         var path = Environment.CurrentDirectory + $"\\log{_logFileNum}.txt";
-        file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-        if (CheckFileSize())
+
+        try
         {
-            file.Close();
+            file = File.Open(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            if (CheckFileSize())
+            {
+                file.Close();
+                return false;
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
             return false;
         }
 

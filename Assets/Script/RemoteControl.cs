@@ -14,11 +14,21 @@ public class RemoteControl : MonoBehaviour
 
     private byte[] _sendBuffer;
 
+    public Commend commend;
+    public string host;
+    public string port;
     public string clientNum;
     public string packetNum;
     public string packetSize;
 
     private RemoteControlUI _remoteUI;
+
+    public enum Commend
+    {
+        connect,
+        disconnect,
+        quit,
+    }
 
     private void Awake()
     {
@@ -55,12 +65,14 @@ public class RemoteControl : MonoBehaviour
 
     public void ConnectCommend()
     {
-        var commend = $"{clientNum}.{packetSize}.{packetNum}";
+        var commend = $"{this.commend},{host},{port},{clientNum},{packetSize},{packetNum}";
 
         _sendBuffer = Encoding.UTF8.GetBytes(commend);
         
         for (int i = 0; i < _clients.Count; i++)
         {
+            if(!_clients[i].toggle.isOn) continue;
+            
             try
             {
                 _clients[i].socket.Send(_sendBuffer, 0, _sendBuffer.Length, SocketFlags.None);
