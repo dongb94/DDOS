@@ -101,7 +101,7 @@ public class NodeConnect
         }
         finally
         {
-            _socket.Close();
+            _socket?.Close();
             _socket = null;
         }
     }

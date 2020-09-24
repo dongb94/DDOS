@@ -66,7 +66,7 @@ public class Ready : MonoBehaviour
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _socket.SendBufferSize = _socket.ReceiveBufferSize = BUFFERSIZE;
             _socket.NoDelay = true;
-            _socket.ReceiveTimeout = 10000;
+            _socket.ReceiveTimeout = 150000;
 
             _socket.Connect("203.237.125.89", 2080);
 
@@ -79,10 +79,14 @@ public class Ready : MonoBehaviour
 
                     msg = Encoding.Default.GetString(_recvBuffer);
 
-                    var msgParse = msg.Split(',');
-                    
-                    if(msgParse.Length != 6)
+                    char[] separator = {','};
+                    var msgParse = msg.Split(separator, StringSplitOptions.None);
+
+                    if (msgParse.Length != 6)
+                    {
                         LogText.Instance.Print($"=== received commend msg was wrong length {msgParse.Length} ===");
+                        goto receive;
+                    }
                     
                     if (msgParse[0].ToLower().Equals("quit"))
                     {
@@ -129,8 +133,6 @@ public class Ready : MonoBehaviour
                     _socket.Shutdown(SocketShutdown.Both);
                     _socket.Disconnect(false);
                 }
-
-                _connection.DisConnectAll();
             }
             catch (Exception ee)
             {

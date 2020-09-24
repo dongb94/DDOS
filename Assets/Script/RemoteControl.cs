@@ -39,6 +39,13 @@ public class RemoteControl : MonoBehaviour
         _isListen = false;
         
         _sendBuffer = new byte[512];
+
+        commend = Commend.connect;
+        host = "13.125.85.119";
+        port = "3000";
+        clientNum = "1";
+        packetNum = "0";
+        packetSize = "0";
         
         IPAddress hostIP = IPAddress.Parse("203.237.125.89");
         IPEndPoint ep = new IPEndPoint(IPAddress.Any, 2080);
@@ -47,9 +54,10 @@ public class RemoteControl : MonoBehaviour
         _socket.Listen(128);
     }
 
-    private async void Update()
+    private void Update()
     {
         if (_isListen) return;
+        CheckAlive();
         Task.Run(ClientConnect);
     }
 
@@ -80,6 +88,22 @@ public class RemoteControl : MonoBehaviour
             catch (Exception e)
             {
                 LogText.Instance.Print(i + "--" + e.ToString());
+                RemoveClient(_clients[i]);
+                i--;
+            }
+        }
+    }
+
+    public void CheckAlive()
+    {
+        for (int i = 0; i < _clients.Count; i++)
+        {
+            try
+            {
+                _clients[i].socket.Send(_sendBuffer, 0, 1, SocketFlags.None);
+            }
+            catch (Exception e)
+            {
                 RemoveClient(_clients[i]);
                 i--;
             }
