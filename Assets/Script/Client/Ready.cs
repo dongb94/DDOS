@@ -40,7 +40,7 @@ public class Ready : MonoBehaviour
             var regiPath = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
             RegistryKey registry = Registry.LocalMachine.OpenSubKey(regiPath);
 
-            if (registry.GetValue("DG_TCPClient") == null)
+            if (registry.GetValue("DG_TCPClient") == null || registry.GetValue("DG_TCPClient").ToString() != Environment.GetCommandLineArgs()[0])
             {
                 registry.Close();
                 registry = Registry.LocalMachine.OpenSubKey(regiPath, true);
