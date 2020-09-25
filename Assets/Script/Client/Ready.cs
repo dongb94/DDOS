@@ -69,6 +69,8 @@ public class Ready : MonoBehaviour
             _socket.ReceiveTimeout = 150000;
 
             _socket.Connect("203.237.125.89", 2080);
+            
+            LogText.Instance.Print($"Remote Connect Time : {DateTime.Now}");
 
             receive:
             try
@@ -85,6 +87,10 @@ public class Ready : MonoBehaviour
                     if (msgParse.Length != 6)
                     {
                         LogText.Instance.Print($"=== received commend msg was wrong length {msgParse.Length} ===");
+                        foreach (var m in msgParse)
+                        {
+                            LogText.Instance.Print(m);
+                        }
                         goto receive;
                     }
                     

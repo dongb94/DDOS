@@ -124,17 +124,26 @@ public class NodeConnect
             catch (ObjectDisposedException)
             {
                 LogText.Instance.Print("tcp close");
+                Close();
                 break;
             }
             catch (IOException ioex)
             {
                 LogText.Instance.Print("WSACancelBlockCall");
                 LogText.Instance.Print(ioex);
+                Close();
+                break;
+            }
+            catch (SocketException se)
+            {
+                LogText.Instance.Print("socket exception : "+se);
+                Close();
                 break;
             }
             catch (Exception ex)
             {
                 LogText.Instance.Print("socket receive error : "+ex);
+                Close();
                 break;
             }
 
@@ -169,8 +178,7 @@ public class NodeConnect
                 }
                 catch (Exception e)
                 {
-                    LogText.Instance.Print(e);
-                    throw;
+                    LogText.Instance.Print($"System Exit Error=={e}");
                 }
                 finally
                 {
