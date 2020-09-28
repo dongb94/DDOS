@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class MultiConnect : MonoBehaviour
 {
-    private List<NodeConnect> _clients;
+    private List<AbstractConnection> _clients;
 
     private void Awake()
     {
-        _clients = new List<NodeConnect>();
+        _clients = new List<AbstractConnection>();
     }
 
     public void DoConnect(string host, uint port, uint clientNum, uint packetSize, uint sendPacketNum)
@@ -20,7 +20,7 @@ public class MultiConnect : MonoBehaviour
         {
             while (_clients.Count != clientNum)
             {
-                var newSocket = new NodeConnect();
+                var newSocket = new NodeConnect(); // 이 부분을 바꿔서 접속 방식 변경
                 _clients.Add(newSocket);
                 newSocket.Initialize();
             }
@@ -28,7 +28,7 @@ public class MultiConnect : MonoBehaviour
 
         try
         {
-            NodeConnect.SetTarget(host, port);
+            AbstractConnection.SetTarget(host, port);
             for (int i = 0; i < clientNum; i++)
             {
                 _clients[i].Connect(sendPacketNum, packetSize);

@@ -6,39 +6,18 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public class NodeConnect
+public class NodeConnect : AbstractConnection
 {
-    private static string IP = "13.125.85.119";
-    private static int PORT = 3000;
-
-    private const int MAX_BUFFER_SIZE = 65535;
-    private const int RESERVE_SIZE = ushort.MaxValue;
-
     private uint sendCount = 0;
-
-    private byte[] _sendBuffer;
-    private byte[] _rcvBuffer;
+    
     private Socket _socket;
-
     private Thread _recvListen;
 
     private int recvSize;
 
     public string msg;
 
-    public void Initialize()
-    {
-        _rcvBuffer = new byte[MAX_BUFFER_SIZE];
-        _sendBuffer = new byte[MAX_BUFFER_SIZE];
-    }
-
-    public static void SetTarget(string ip, uint port)
-    {
-        IP = ip;
-        PORT = (int) port;
-    }
-
-    public async Task<Socket> Connect(uint sendCount, uint bufferSize)
+    public override async Task<Socket> Connect(uint sendCount, uint bufferSize)
     {
         if (_socket != null && _socket.Connected) return _socket;
         
@@ -84,7 +63,7 @@ public class NodeConnect
         return _socket;
     }
 
-    public void Close()
+    public override void Close()
     {
         try
         {
